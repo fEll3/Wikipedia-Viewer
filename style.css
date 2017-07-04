@@ -8,7 +8,7 @@ body {
 
 .main {
   position: absolute;
-  top: 50%;
+  top: -10%;
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
 }
@@ -68,7 +68,9 @@ body {
 }
 
 .main.active .icon {
-  opacity: 0;
+  opacity: 1;
+  left: 90%;
+  color: #fff;
 }
 
 .main .close {
@@ -111,4 +113,34 @@ body {
   height: 5px;
   left: 0px;
   top: 10px;
+}
+
+/*Result Search*/
+
+.resultContainer {
+  position: absolute;
+  top: 20%;
+  text-align: center;
+}
+
+.result {
+  padding: 0;
+  list-style: none;
+}
+
+.result li {
+  opacity: 0.8;
+  border: 1px solid lightgrey;
+  height: 100px;
+  background-color: #fff;
+  margin-left: 30px;
+  margin-right: 30px;
+  margin-bottom: 3px;
+}
+
+.result li h4 {
+  font-family: sans-serif;
+  font-variant: small-caps;
+  font-style: oblique;
+  text-decoration: none;
 }

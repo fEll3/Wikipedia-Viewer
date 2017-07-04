@@ -10,15 +10,17 @@
     <link rel="stylesheet" type="text/css" href="style.css">
   </head>
   <body>
-    <div class="main">
+    <div class="main" id="searchBox">
       <div class="holder">
         <input type="text" class="input" placeholder="Search...">
-        <i class="fa fa-search fa-3x icon" onclick="search(this); "aria-hidden="true"></i>
+        <i class="fa fa-search fa-3x icon" onclick="search(this, event); "aria-hidden="true"></i>
       </div>
-      <span class="close" onclick="search(this);"></span>
-
+      <span class="close" onclick="search(this, event);"></span>
     </div>
-
+    <div class="resultContainer">
+      <ul class="result"></ul>
+    </div>
+    <canvas></canvas>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="js.js" type="text/javascript"></script>
   </body>
