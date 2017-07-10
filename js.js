@@ -5,7 +5,12 @@ $(function(){
   var $result = $(".result");
 
   // Animating Question mark form -10% to 50% on page load
+  function animatingSearch(){
+  $(".main").animate({top: "100%"}, "slow");
+  $(".main").animate({top: "30%"}, "slow");
+  $(".main").animate({top: "100%"}, "slow");
   $(".main").animate({top: "50%"}, "slow");
+};
 
   // Function to animated search menu add and remove class active
   search = function(obj, evt){
@@ -22,7 +27,7 @@ $(function(){
   // Click function to triger the wikipedia search
   $(".icon").click(function(){
     var $input = $(".input").val();
-    if($input == "") {
+    if($input == "" && $(".input").width() > 0) {
       window.open("https://en.wikipedia.org/wiki/Special:Random", "_blank");
     } else {
       $.ajax({
@@ -58,13 +63,17 @@ $(function(){
   // Variabels
   var colors = ['#2185C5', '#7ECEFD', '#FFF6E5', '#FF7F66'];
   var objectArray = [];
+  var movers = [];
   var gravity = 1;
-  var friciton;
+  var friction = 0.9;
 
   //Event Listeners
   addEventListener("resize", function(){
     canvas.width = innerWidth;
     canvas.height = innerHeight;
+    if($result.width() <= 0){
+      init();
+    };
   });
 
   // Utility functions
@@ -77,16 +86,24 @@ $(function(){
   }
 
   //Objects
-  function SearchIcon(x, y, dy, color){
+  function SearchIcon(x, y, dx, dy, color){
     this.x = x;
     this.y = y;
+    this.dx = dx;
     this.dy = dy;
     this.color = color;
 
     this.update = function(){
-      if (this.y > canvas.height) {
-        this.dy = -this.dy;
-      }
+      if (this.y + this.dy + 6 > canvas.height) {
+        this.dy = -this.dy * friction;
+      } else {
+        this.dy += gravity;
+      };
+      if(this.x + this.dx + 50 > canvas.width || this.x + this.dx < 0){
+        this.dx = -this.dx;
+      };
+
+      this.x += this.dx;
       this.y += this.dy;
       this.draw();
     };
@@ -98,29 +115,54 @@ $(function(){
       ctx.fillStyle = this.color;
       ctx.closePath();
     };
+
+  };
+
+  // Function to select a object from a objectArray, and return it
+  function getNewMover(){
+    return objectArray.splice(Math.floor(Math.random() * objectArray.length), 1)[0];
+  };
+
+  function newArray(){
+    // add a random first object to be the first mover
+    movers.push(getNewMover());
+      // set time interval for adding new movers
+    //   setInterval(function() {
+    //   if (objectArray.length > 0) {
+    //       movers.push(getNewMover());
+    //   }
+    // }, 300);
   };
 
   //Implementation
   function init(){
     objectArray = [];
     for (var i = 0; i < 100; i++) {
-      var x = randomNumber(0, canvas.width);
-      var y = randomNumber(0, canvas.height);
-      var dy = randomNumber(4, 8);
+      var x = randomNumber(0, canvas.width - 50);
+      var y = randomNumber(0, canvas.height - 6);
+      var dx = randomNumber(-2, 2);
+      var dy = randomNumber(3, 6);
       var color = randomColor(colors);
-      objectArray.push(new SearchIcon(x, y, dy, color));
+      objectArray.push(new SearchIcon(x, y, dx, dy, color));
     }
   };
 
-  // Animate Loop
+  //Animate Loop
   function animate(){
-    requestAnimationFrame(animate);
+    requestID = requestAnimationFrame(animate);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (var i = 0; i < objectArray.length; i++) {
       objectArray[i].update();
     }
+    if($(".main").hasClass("active")){
+      newArray();
+    };
+    if(objectArray.length == 0 && newArray.length == 100){
+      cancelAnimationFrame(requestID);
+    };
   };
 
+  animatingSearch();
   init();
   animate();
 
