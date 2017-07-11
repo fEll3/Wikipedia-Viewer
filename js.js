@@ -3,6 +3,7 @@ $(function(){
   var url = "https://en.wikipedia.org/w/api.php?action=opensearch&search="
   var callback = "&callback=?"
   var $result = $(".result");
+  var mq = window.matchMedia("(max-width: 800px)");
 
   // Animating Question mark form -10% to 50% on page load
   function animatingSearch(){
@@ -35,12 +36,17 @@ $(function(){
         dataType: "jsonp",
         format: "jsonp",
         success: function(x){
-          $(".main").animate({top: "10%"}, "slow");
+          $(".main").animate({top: "10%"});
           $result.html("");
           for (var i = 0; i < x[1].length; i++) {
             $result.append('<li><a href="' + x[3][i] + '" target="_blank"><h4>'
             + x[1][i] + '</h4></a><p>' + x[2][i] + '</p></li>');
           }
+          $(".close").click(function(){
+            $result.html("");
+            $(".main").animate({top: "50%"});
+            init();
+          });
         }
       })
     }
@@ -61,7 +67,7 @@ $(function(){
   canvas.height = innerHeight;
 
   // Variabels
-  var colors = ['#2185C5', '#7ECEFD', '#FFF6E5', '#FF7F66'];
+  var colors = ['#fff', '#BEDB39', '#FFE11A', '#FD7400'];
   var objectArray = [];
   var movers = [];
   var gravity = 1;
@@ -71,7 +77,7 @@ $(function(){
   addEventListener("resize", function(){
     canvas.width = innerWidth;
     canvas.height = innerHeight;
-    if($result.width() <= 0){
+    if($("ul li").val() != ""){
       init();
     };
   });
@@ -135,15 +141,25 @@ $(function(){
   };
 
   //Implementation
+  function creataObject(){
+    var x = randomNumber(0, canvas.width - 50);
+    var y = randomNumber(0, canvas.height - 6);
+    var dx = randomNumber(-3, 6);
+    var dy = randomNumber(3, 6);
+    var color = randomColor(colors);
+    objectArray.push(new SearchIcon(x, y, dx, dy, color));
+  };
+  // Adding media querys with mq.matches for max-width:800px
   function init(){
     objectArray = [];
-    for (var i = 0; i < 100; i++) {
-      var x = randomNumber(0, canvas.width - 50);
-      var y = randomNumber(0, canvas.height - 6);
-      var dx = randomNumber(-2, 2);
-      var dy = randomNumber(3, 6);
-      var color = randomColor(colors);
-      objectArray.push(new SearchIcon(x, y, dx, dy, color));
+    if(mq.matches) {
+      for (var i = 0; i < 100; i++) {
+        creataObject();
+      }
+    } else {
+      for (var i = 0; i < 200; i++) {
+        creataObject();
+      }
     }
   };
 
@@ -157,7 +173,7 @@ $(function(){
     if($(".main").hasClass("active")){
       newArray();
     };
-    if(objectArray.length == 0 && newArray.length == 100){
+    if(objectArray.length == 0 && newArray.length == 200){
       cancelAnimationFrame(requestID);
     };
   };
